@@ -53,23 +53,27 @@ The service takes no credentials, and there is one address for everyone, so
 | Key | Default | Meaning |
 |-----|---------|---------|
 | `base_url` | `https://lookup.binlist.net` | Address to query |
-| `cache_ttl` | `2592000` | Seconds a resolved profile is kept; `0` turns caching off |
+| `cache_ttl` | `7776000` | Seconds a resolved profile is kept; `0` turns caching off |
 | `cache_store` | `null` | Cache store name; the application default when absent |
 | `timeout` | `5` | Seconds to wait for an answer |
 
 ## Rate Limits
 
 The free endpoint allows a handful of requests per hour per address, and answers `429`
-once that is spent. A resolved profile is cached for 30 days, which is what makes the
-free tier workable: a BIN belongs to an issuer for as long as the range exists, so a
-busy shop asks about each range once a month.
+once that is spent. A resolved profile is cached for 90 days, which is what makes the
+free tier workable: a busy shop asks about each range once a quarter.
+
+The fields this service fills are the durable ones. A country and a scheme belong to the
+range by assignment and do not move, unlike an issuer's trading name or a loyalty
+program, which change when banks merge or leave a scheme. A provider that answers those
+deserves a shorter life than this one.
 
 An answer that resolves nothing is not cached, so a rate-limited hour does not poison
 the cache with blanks.
 
 What is stored is binlist's own payload, not the profile built from it. The profile is
 rebuilt on every read, so a correction to this mapping or a new field on `CardProfile`
-takes effect immediately instead of waiting a month for the cache to turn over.
+takes effect immediately instead of waiting the cache out.
 
 Requests carry `Accept-Version: 3`, the version this mapping was written against.
 

@@ -14,7 +14,7 @@ class BinlistBinLookup implements BinLookupProvider
 {
     private const string BASE_URL = 'https://lookup.binlist.net';
 
-    private const int CACHE_TTL = 2592000;
+    private const int CACHE_TTL = 7776000;
 
     private const string CACHE_PREFIX = 'payline:bin-lookup:binlist:';
 
