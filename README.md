@@ -35,13 +35,16 @@ Name `binlist` as the BIN lookup driver in `config/payline.php`:
 
 ```php
 'bin_lookup' => [
-    'default' => env('PAYLINE_BIN_LOOKUP_DRIVER', 'binlist'),
+    'providers' => ['binlist'],
     'drivers' => [],
 ],
 ```
 
-```dotenv
-PAYLINE_BIN_LOOKUP_DRIVER=binlist
+binlist names no card family, so a shop routing on Turkish loyalty programs lists a
+provider that does before it and lets Payline merge the two answers:
+
+```php
+'providers' => ['hoppa', 'binlist'],
 ```
 
 The service takes no credentials, and there is one address for everyone, so
@@ -63,6 +66,10 @@ busy shop asks about each range once a month.
 
 An answer that resolves nothing is not cached, so a rate-limited hour does not poison
 the cache with blanks.
+
+What is stored is binlist's own payload, not the profile built from it. The profile is
+rebuilt on every read, so a correction to this mapping or a new field on `CardProfile`
+takes effect immediately instead of waiting a month for the cache to turn over.
 
 Requests carry `Accept-Version: 3`, the version this mapping was written against.
 
